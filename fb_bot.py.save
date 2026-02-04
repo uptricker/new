@@ -1,0 +1,42 @@
+from fbchat import Client, Message, ThreadType
+import time
+
+EMAIL = "yogeshkumar111220@gmail.com"
+PASSWORD = "g-223344"
+
+client = Client(EMAIL, PASSWORD)
+
+if client.login():
+    print("✅ Login successful!")
+    
+    # ========== INBOX (1-on-1 Chat) ==========
+    def send_to_inbox(user_id, message):
+        """user_id = friend's facebook ID"""
+        client.send(Message(text=message), thread_id=user_id, thread_type=ThreadType.USER)
+        print(f"✅ Inbox message sent to {user_id}")
+    
+    # ========== GROUP CHAT ==========
+    def send_to_group(group_id, message):
+        client.send(Message(text=message), thread_id=group_id, thread_type=ThreadType.GROUP)
+        print(f"✅ Group message sent to {group_id}")
+    
+    # ========== ALL CHATS LIST ==========
+    def list_all_chats():
+        threads = client.fetchThreadList(limit=20)
+        print("
+📱 All Chats:")
+        for thread in threads:
+            chat_type = "👤 INBOX" if thread.type == ThreadType.USER else "👥 GROUP"
+            print(f"  {chat_type} | ID: {thread.uid} | Name: {thread.name or 'No name'}")
+    
+    # ========== USAGE ==========
+    list_all_chats()  # Sab chats dekho
+    
+    # Inbox example (friend ka ID dalo)
+    send_to_inbox("", "Hey bhai! Auto inbox message 🔥")
+    
+    # Group example
+    send_to_group("1290358189239818", "Group me auto post! 🚀")
+    
+    print("👂 Listening live... (Ctrl+C stop)")
+    client.listen()
